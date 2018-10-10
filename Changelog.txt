@@ -1,4 +1,12 @@
-v1.2 - August 19th, 2017 
+v1.5 - November 22th, 2017
+o Added Spanish Latin translation, courtsey of [url=https://www.simplemachines.org/community/index.php?action=profile;u=322597]Rock Lee[/url]!
+
+v1.4 - November 20th, 2017
+o Fixed code so that user-selected version emulation is taken into account.
+
+v1.3 - ????
+
+v1.2 - August 19th, 2017
 o Fixed undefined element error in [b]Sources/Sub-Packages.php[/b].
 o Fixed undefined element error in [b]Themes/default/Packages.template.php[/b].
 

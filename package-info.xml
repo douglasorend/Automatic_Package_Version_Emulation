@@ -5,15 +5,17 @@
 	<id>Dougiefresh:AutoVersionEmulation</id>
 	<name>Automatic Package Version Emulation</name>
 	<type>modification</type>
-	<version>1.4</version>
-
+	<version>1.5</version>
+	
 	<install for="2.0 - 2.0.99">
 		<readme parsebbc="true">readme.txt</readme>
 		<modification>install_20x.xml</modification>
 		<modification>language_english.xml</modification>
+		<modification>language_spanish_latin.xml</modification>
 	</install>
 	<uninstall for="2.0 - 2.0.99">
 		<modification reverse="true">install_20x.xml</modification>
 		<modification reverse="true">language_english.xml</modification>
+		<modification reverse="true">language_spanish_latin.xml</modification>
 	</uninstall>
 </package-info>

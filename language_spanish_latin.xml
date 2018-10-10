@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+<id>Dougiefresh:AutoVersionEmulation</id>
+<name>Automatic Package Version Emulation</name>
+<version>1.5</version>
+
+<file name="$languagedir/Packages.spanish_latin-utf8.php" error="skip">
+	<operation>
+		<search position="end" />
+		<add><![CDATA[
+$txt['install_emulating'] = 'Instalar Emulando';
+$txt['uninstall_emulating'] = 'Desinstalar Emulando';
+$txt['upgrade_emulating'] = 'Actualizar Emulando';
+]]></add>
+	</operation>
+</file>
+</modification>
+
+<file name="$languagedir/Packages.spanish_latin.php" error="skip">
+	<operation>
+		<search position="end" />
+		<add><![CDATA[
+$txt['install_emulating'] = 'Instalar Emulando';
+$txt['uninstall_emulating'] = 'Desinstalar Emulando';
+$txt['upgrade_emulating'] = 'Actualizar Emulando';
+]]></add>
+	</operation>
+</file>
+</modification>
