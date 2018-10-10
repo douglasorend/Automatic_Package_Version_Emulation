@@ -68,7 +68,7 @@
 	<operation>
 		<search position="before"><![CDATA[// Loop through each version.]]></search>
 		<add><![CDATA[
-	$context['autoemulate_version'] = $context['autoemulate_default'];]]></add>
+	$context['autoemulate_version'] = isset($context['autoemulate_default']) ? $context['autoemulate_default'] : false;]]></add>
 	</operation>
 	<operation>
 		<search position="before"><![CDATA[list ($lower, $upper) = explode('-', $for);]]></search>
@@ -158,7 +158,7 @@
 <!-- template_view_package function -->
 	<operation>
 		<search position="replace"><![CDATA[<form action="', $scripturl, '?action=admin;area=packages;sa=', $context['uninstalling'] ? 'uninstall' : 'install', $context['ftp_needed'] ? '' : '2', ';package=', $context['filename'], ';pid=', $context['install_id'], '" onsubmit="submitonce(this);" method="post" accept-charset="', $context['character_set'], '">]]></search>
-		<add><![CDATA[<form action="', $scripturl, '?action=admin;area=packages;sa=', $context['uninstalling'] ? 'uninstall' : 'install', $context['ftp_needed'] ? '' : '2', $context['emulate_version'] , ';package=', $context['filename'], ';pid=', $context['install_id'], '" onsubmit="submitonce(this);" method="post" accept-charset="', $context['character_set'], '">]]></add>
+		<add><![CDATA[<form action="', $scripturl, '?action=admin;area=packages;sa=', $context['uninstalling'] ? 'uninstall' : 'install', $context['ftp_needed'] ? '' : '2', isset($context['emulate_version']) ? $context['emulate_version'] : '', ';package=', $context['filename'], ';pid=', $context['install_id'], '" onsubmit="submitonce(this);" method="post" accept-charset="', $context['character_set'], '">]]></add>
 	</operation>
 </file>
 </modification>

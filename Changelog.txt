@@ -1,3 +1,7 @@
+v1.2 - August 19th, 2017
+o Fixed undefined element error in [b]Sources/Sub-Packages.php[/b].
+o Fixed undefined element error in [b]Themes/default/Packages.template.php[/b].
+
 v1.1 - August 14th, 2017
 o Fixed issue where user-selected version emulation was ignored.
 o Fixed issue where text was displayed before templates started.
