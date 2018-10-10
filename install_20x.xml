@@ -3,27 +3,21 @@
 <modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
 <id>Dougiefresh:AutoVersionEmulation</id>
 <name>Automatic Package Version Emulation</name>
-<version>1.0</version>
+<version>1.1</version>
 
 <!-------------------------------------------------------------------------->
 <!-- Source file modifications                                            -->
 <!-------------------------------------------------------------------------->
 <file name="$sourcedir/Packages.php">
-<!-- Packages function -->
+<!-- PackageBrowse function -->
 	<operation>
-		<search position="before"><![CDATA[global $txt, $scripturl, $sourcedir, $context]]></search>
-		<add><![CDATA[, $forum_version]]></add>
-	</operation>
-	<operation>
-		<search position="after"><![CDATA[// Delegation makes the world... that is, the package manager go 'round.]]></search>
-		<add><![CDATA[// Set AutoEmulate variable to "2.0dev0" level:
-	$context['autoemulate_version'] = '1.999';
-	$context['forum_version'] = strtr($forum_version, array('SMF ' => ''));
+		<search position="after"><![CDATA[// Get a list of all the ids installed, so the latest packages won't include already installed ones.]]></search>
+		<add><![CDATA[// Set autoemulation version to "SMF 2.0dev0" level:
+	$context['autoemulate_version'] = $context['autoemulate_default'] = $context['forum_version'] == $forum_version ? '1.999' : false;
+	$context['autoemulate_forum'] = strtr($forum_version, array('SMF ' => ''));
 
 	]]></add>
 	</operation>
-
-<!-- PackageBrowse function -->
 	<operation>
 		<search position="before"><![CDATA[$packageInfo['can_upgrade'] = false;]]></search>
 		<add><![CDATA[
@@ -62,22 +56,6 @@
 				}
 ]]></add>
 	</operation>
-	
-<!-- PackageInstallTest function -->
-	<operation>
-		<search position="before"><![CDATA[$context['sub_template'] = 'view_package';]]></search>
-		<add><![CDATA[
-	$context['emulate_version'] = (!empty($_GET['emulate']) ? ';emulate=' . $_GET['emulate'] : false);]]></add>
-	</operation>
-	
-<!-- PackageInstall function -->
-	<operation>
-		<search position="after"><![CDATA[// You have to specify a file!!]]></search>
-		<add><![CDATA[// Set AutoEmulate variable to "2.0dev0" level:
-	$context['autoemulate_version'] = '1.999';
-
-	]]></add>
-	</operation>
 </file>
 <file name="$sourcedir/Subs-Package.php">
 <!-- matchPackageVersion function -->
@@ -88,11 +66,16 @@
 	]]></add>
 	</operation>
 	<operation>
+		<search position="before"><![CDATA[// Loop through each version.]]></search>
+		<add><![CDATA[
+	$context['autoemulate_version'] = $context['autoemulate_default'];]]></add>
+	</operation>
+	<operation>
 		<search position="before"><![CDATA[list ($lower, $upper) = explode('-', $for);]]></search>
 		<add><![CDATA[
 			
 			// Detect best level to emulate:
-			if (substr($upper, 0, 3) == '2.0' && $upper > $context['autoemulate_version'] && $upper <= $context['forum_version'])
+			if (!empty($context['autoemulate_version']) && substr($upper, 0, 3) == '2.0' && $upper > $context['autoemulate_version'] && $upper <= $context['autoemulate_forum'])
 				$context['autoemulate_version'] = $upper;]]></add>
 	</operation>
 	<operation>
@@ -100,7 +83,7 @@
 			return true;]]></search>
 		<add><![CDATA[else
 		{
-			if (substr($for, 0, 3) == '2.0' && $for > $context['autoemulate_version'] && $for <= $context['forum_version'])
+			if (!empty($context['autoemulate_version']) && substr($for, 0, 3) == '2.0' && $for > $context['autoemulate_version'] && $for <= $context['autoemulate_forum'])
 				$context['autoemulate_version'] = $for;
 			if (compareVersions($version, $for) === 0)
 				return true;
@@ -121,54 +104,51 @@
 <!-------------------------------------------------------------------------->
 <file name="$themedir/Packages.template.php">
 <!-- template_browse function -->
-	<!-- These 3 operations are repeated 4 times because that's how many times they occur!  Do not adjust! -->
-	<!-- 1st time: BROWSE mods -->
 	<operation>
 		<search position="replace"><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $package['filename'], ';pid=', $package['installed_id'], '">[ ', $txt['uninstall'], ' ]</a>';]]></search>
 		<add><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $package['filename'], $package['emulate_url'], ';pid=', $package['installed_id'], '">[ ', empty($package['emulate_version']) ? $txt['uninstall_mod'] : $txt['uninstall_emulating'] . ': ' . strtoupper($package['emulate_version']), ' ]</a>';]]></add>
 	</operation>
 	<operation>
+		<search position="replace"><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $package['filename'], ';pid=', $package['installed_id'], '">[ ', $txt['uninstall'], ' ]</a>';]]></search>
+		<add><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $package['filename'], $package['emulate_url'], ';pid=', $package['installed_id'], '">[ ', empty($package['emulate_version']) ? $txt['uninstall_mod'] : $txt['uninstall_emulating'] . ': ' . strtoupper($package['emulate_version']), ' ]</a>';]]></add>
+	</operation>
+	<operation>
+		<search position="replace"><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $package['filename'], ';pid=', $package['installed_id'], '">[ ', $txt['uninstall'], ' ]</a>';]]></search>
+		<add><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $package['filename'], $package['emulate_url'], ';pid=', $package['installed_id'], '">[ ', empty($package['emulate_version']) ? $txt['uninstall_mod'] : $txt['uninstall_emulating'] . ': ' . strtoupper($package['emulate_version']), ' ]</a>';]]></add>
+	</operation>
+	<operation>
+		<search position="replace"><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $package['filename'], ';pid=', $package['installed_id'], '">[ ', $txt['uninstall'], ' ]</a>';]]></search>
+		<add><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $package['filename'], $package['emulate_url'], ';pid=', $package['installed_id'], '">[ ', empty($package['emulate_version']) ? $txt['uninstall_mod'] : $txt['uninstall_emulating'] . ': ' . strtoupper($package['emulate_version']), ' ]</a>';]]></add>
+	</operation>
+
+	<operation>
 		<search position="replace"><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['package_upgrade'], ' ]</a>';]]></search>
 		<add><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], $package['emulate_url'], '">[ ', empty($package['emulate_version']) ? $txt['package_upgrade'] : $txt['upgrade_emulating'] . ': ' . strtoupper($package['emulate_version']), ' ]</a>';]]></add>
+	</operation>
+	<operation>
+		<search position="replace"><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['package_upgrade'], ' ]</a>';]]></search>
+		<add><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], $package['emulate_url'], '">[ ', empty($package['emulate_version']) ? $txt['package_upgrade'] : $txt['upgrade_emulating'] . ': ' . strtoupper($package['emulate_version']), ' ]</a>';]]></add>
+	</operation>
+	<operation>
+		<search position="replace"><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['package_upgrade'], ' ]</a>';]]></search>
+		<add><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], $package['emulate_url'], '">[ ', empty($package['emulate_version']) ? $txt['package_upgrade'] : $txt['upgrade_emulating'] . ': ' . strtoupper($package['emulate_version']), ' ]</a>';]]></add>
+	</operation>
+	<operation>
+		<search position="replace"><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['package_upgrade'], ' ]</a>';]]></search>
+		<add><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], $package['emulate_url'], '">[ ', empty($package['emulate_version']) ? $txt['package_upgrade'] : $txt['upgrade_emulating'] . ': ' . strtoupper($package['emulate_version']), ' ]</a>';]]></add>
+	</operation>
+
+	<operation>
+		<search position="replace"><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['install_mod'], ' ]</a>';]]></search>
+		<add><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], $package['emulate_url'], '">[ ', empty($package['emulate_version']) ? $txt['install_mod'] : $txt['install_emulating'] . ': ' . strtoupper($package['emulate_version']), ' ]</a>';]]></add>
 	</operation>
 	<operation>
 		<search position="replace"><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['install_mod'], ' ]</a>';]]></search>
 		<add><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], $package['emulate_url'], '">[ ', empty($package['emulate_version']) ? $txt['install_mod'] : $txt['install_emulating'] . ': ' . strtoupper($package['emulate_version']), ' ]</a>';]]></add>
 	</operation>
-	<!-- 2nd time: BROWSE avatars -->
-	<operation>
-		<search position="replace"><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $package['filename'], ';pid=', $package['installed_id'], '">[ ', $txt['uninstall'], ' ]</a>';]]></search>
-		<add><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $package['filename'], ';pid=', $package['installed_id'], $package['emulate_url'], '">[ ', empty($package['emulate_version']) ? $txt['uninstall_mod'] : $txt['uninstall_emulating'] . ': ' . strtoupper($package['emulate_version']), ' ]</a>';]]></add>
-	</operation>
-	<operation>
-		<search position="replace"><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['package_upgrade'], ' ]</a>';]]></search>
-		<add><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], $package['emulate_url'], '">[ ', empty($package['emulate_version']) ? $txt['package_upgrade'] : $txt['upgrade_emulating'] . ': ' . strtoupper($package['emulate_version']), ' ]</a>';]]></add>
-	</operation>
 	<operation>
 		<search position="replace"><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['install_mod'], ' ]</a>';]]></search>
 		<add><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], $package['emulate_url'], '">[ ', empty($package['emulate_version']) ? $txt['install_mod'] : $txt['install_emulating'] . ': ' . strtoupper($package['emulate_version']), ' ]</a>';]]></add>
-	</operation>
-	<!-- 3rd time: BROWSE languages -->
-	<operation>
-		<search position="replace"><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $package['filename'], ';pid=', $package['installed_id'], '">[ ', $txt['uninstall'], ' ]</a>';]]></search>
-		<add><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $package['filename'], ';pid=', $package['installed_id'], $package['emulate_url'], '">[ ', empty($package['emulate_version']) ? $txt['uninstall_mod'] : $txt['uninstall_emulating'] . ': ' . strtoupper($package['emulate_version']), ' ]</a>';]]></add>
-	</operation>
-	<operation>
-		<search position="replace"><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['package_upgrade'], ' ]</a>';]]></search>
-		<add><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], $package['emulate_url'], '">[ ', empty($package['emulate_version']) ? $txt['package_upgrade'] : $txt['upgrade_emulating'] . ': ' . strtoupper($package['emulate_version']), ' ]</a>';]]></add>
-	</operation>
-	<operation>
-		<search position="replace"><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['install_mod'], ' ]</a>';]]></search>
-		<add><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], $package['emulate_url'], '">[ ', empty($package['emulate_version']) ? $txt['install_mod'] : $txt['install_emulating'] . ': ' . strtoupper($package['emulate_version']), ' ]</a>';]]></add>
-	</operation>
-	<!-- 4th time: BROWSE other -->
-	<operation>
-		<search position="replace"><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $package['filename'], ';pid=', $package['installed_id'], '">[ ', $txt['uninstall'], ' ]</a>';]]></search>
-		<add><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $package['filename'], ';pid=', $package['installed_id'], $package['emulate_url'], '">[ ', empty($package['emulate_version']) ? $txt['uninstall_mod'] : $txt['uninstall_emulating'] . ': ' . strtoupper($package['emulate_version']), ' ]</a>';]]></search>
-	</operation>
-	<operation>
-		<search position="replace"><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['package_upgrade'], ' ]</a>';]]></search>
-		<add><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], $package['emulate_url'], '">[ ', empty($package['emulate_version']) ? $txt['package_upgrade'] : $txt['upgrade_emulating'] . ': ' . strtoupper($package['emulate_version']), ' ]</a>';]]></add>
 	</operation>
 	<operation>
 		<search position="replace"><![CDATA[<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['install_mod'], ' ]</a>';]]></search>
