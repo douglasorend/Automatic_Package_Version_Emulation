@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+<id>Dougiefresh:AutoVersionEmulation</id>
+<name>Automatic Package Version Emulation</name>
+<version>1.0</version>
+
+<file name="$languagedir/Packages.english.php">
+	<operation>
+		<search position="end" />
+		<add><![CDATA[
+$txt['install_emulating'] = 'Install Emulating';
+$txt['uninstall_emulating'] = 'Uninstall Emulating';
+$txt['upgrade_emulating'] = 'Upgrade Emulating';
+]]></add>
+	</operation>
+</file>
+</modification>
