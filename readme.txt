@@ -1,5 +1,5 @@
 [hr]
-[center][color=red][size=16pt][b]AUTOMATIC PACKAGE VERSION EMULATION v1.5[/b][/size][/color]
+[center][color=red][size=16pt][b]AUTOMATIC PACKAGE VERSION EMULATION v1.6[/b][/size][/color]
 [url=http://www.simplemachines.org/community/index.php?action=profile;u=253913][b]By Dougiefresh[/b][/url] -> [url=http://custom.simplemachines.org/mods/index.php?mod=4086]Link to Mod[/url]
 [/center]
 [hr]
@@ -18,7 +18,7 @@ This mod was tested on SMF 2.0.11, but should work on SMF 2.0 and up.  SMF 1.x i
 Furthermore, SMF 2.1 will not be supported, as it already has this functionality built in.
 
 [color=blue][b][size=12pt][u]Changelog[/u][/size][/b][/color]
-The changelog has been removed and can be seen at [url=http://www.xptsp.com/board/index.php?topic=659.msg971#msg971]XPtsp.com[/url].
+The changelog can be viewed at [url=http://www.xptsp.com/board/free-modifications/automatic-package-version-emulation/]XPtsp.com[/url].
 
 [color=blue][b][size=12pt][u]License[/u][/size][/b][/color]
 [quote]Copyright (c) 2016 - 2017, Douglas Orend
